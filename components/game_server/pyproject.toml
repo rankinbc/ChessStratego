@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 100
+cache-dir = "~/.cache/ruff"
+
+[tool.mypy]
+cache_dir = "~/.cache/mypy/chessstratego"
+python_version = "3.11"
+warn_unused_ignores = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"
+asyncio_mode = "auto"

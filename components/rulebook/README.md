@@ -16,7 +16,7 @@ Open `RULES.md` and `DECISION_LOG.md` directly in any editor — there's no buil
 
 ## Structure
 
-- `RULES.md` — the living rulebook. Sections marked **DECIDED** (overview, combat resolution, win conditions, check rules) are written in full, including documented-but-inactive variants. Sections marked **PARTIALLY DECIDED** or **STUB** (board geometry, setup mechanics, turn order) have the locked parts written out and open questions flagged as `[/execute-prp fills this in]`.
+- `RULES.md` — the living rulebook. Every section is **DECIDED** and written in full, including documented-but-inactive variants (each with the one-module swap that activates it). The only open questions are the ones a variant defers to activation time.
 - `DECISION_LOG.md` — table of playtest-driven rule changes: date, what felt broken, rule change made, code module edited.
 
 ---

@@ -2,13 +2,19 @@
 
 Pure module — no FastAPI imports.
 
-CURRENT RULE (v1): a player is eliminated when their flag is captured OR
-their king is captured (either is sufficient). On elimination all their
-remaining pieces are removed from the board (not frozen). Play continues
-among the rest; the last player still standing wins. If no active player
-can move, the game ends in a draw (handled by movement.advance_turn).
+CURRENT RULE (revised 2026-10-25, see DECISION_LOG.md): a player is
+eliminated only when BOTH their flag AND their king have been captured, in
+either order and by any opponent(s). Losing one of them changes nothing on
+its own — the player fights on with whatever is left until the other falls.
+"Checkmate" in this game simply means the king is captured: there is no
+check warning and no forced response (see RULES.md section 7). On
+elimination all remaining pieces are removed from the board (not frozen).
+Play continues among the rest; the last player still standing wins. If no
+active player can move, the game ends in a draw (movement.advance_turn).
 
 DOCUMENTED VARIANTS (NOT ACTIVE):
+- Either-or (the v1 rule): losing EITHER the flag OR the king eliminates.
+  Swap: change `all(...)` to `any(...)` in check_elimination.
 - Flag-only: only flag capture eliminates; a king-less player keeps
   playing and the king stops being special. Swap: drop "king" from
   CRITICAL_TYPES.
@@ -27,15 +33,23 @@ if TYPE_CHECKING:
 CRITICAL_TYPES = ("flag", "king")
 
 
+def _lost(state: GameState, player_id: str, critical: str) -> bool:
+    return any(
+        piece.owner == player_id and piece.type == critical and piece.captured
+        for piece in state.pieces.values()
+    )
+
+
 def check_elimination(state: GameState, player_id: str) -> str | None:
-    """Return the elimination reason ("flag_captured"/"king_captured") or None."""
+    """Return the elimination reason ("flag_and_king_captured") or None.
+
+    Every critical piece type must be gone — one alone is never enough.
+    """
     player = next(p for p in state.players if p.id == player_id)
     if player.eliminated:
         return None
-    for critical in CRITICAL_TYPES:
-        for piece in state.pieces.values():
-            if piece.owner == player_id and piece.type == critical and piece.captured:
-                return f"{critical}_captured"
+    if all(_lost(state, player_id, critical) for critical in CRITICAL_TYPES):
+        return "_and_".join(CRITICAL_TYPES) + "_captured"
     return None
 
 

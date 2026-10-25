@@ -1,6 +1,7 @@
 import pytest
 
 from app.engine.combat import resolve_combat
+from app.engine.pieces import STRATEGO_RANKS
 from app.engine.state import apply_move
 from tests.helpers import make_piece, put, sparse_state
 
@@ -35,27 +36,52 @@ def test_stratego_attacker_beats_any_chess_piece():
         assert (outcome.attacker_survives, outcome.defender_survives) == (True, False)
 
 
-def test_spy_beats_marshal_only_when_attacking():
-    ambush = fight("stratego", "spy", "stratego", "marshal")
-    assert (ambush.attacker_survives, ambush.defender_survives) == (True, False)
-    assert ambush.special == "spy_assassination"
-    reverse = fight("stratego", "marshal", "stratego", "spy")
-    assert (reverse.attacker_survives, reverse.defender_survives) == (True, False)
-    assert reverse.special == "rank_win"
+def test_ranks_are_classic_one_is_strongest():
+    assert STRATEGO_RANKS["marshal"] == 1
+    assert STRATEGO_RANKS["scout"] == 9
+    assert STRATEGO_RANKS["miner"] == 8
+    assert "spy" not in STRATEGO_RANKS  # pure specialty — no number
+    assert "bomb" not in STRATEGO_RANKS and "flag" not in STRATEGO_RANKS
+
+
+def test_lower_number_wins_a_rank_fight():
+    assert fight("stratego", "marshal", "stratego", "general").attacker_survives
+    assert fight("stratego", "general", "stratego", "colonel").attacker_survives
+    assert fight("stratego", "captain", "stratego", "miner").attacker_survives
+    loss = fight("stratego", "scout", "stratego", "colonel")
+    assert (loss.attacker_survives, loss.defender_survives) == (False, True)
+    assert loss.special == "rank_loss"
+    tie = fight("stratego", "scout", "stratego", "scout")
+    assert (tie.attacker_survives, tie.defender_survives) == (False, False)
+    assert tie.special == "equal_rank"
+
+
+@pytest.mark.parametrize(
+    "defender", ["marshal", "general", "colonel", "major", "captain", "miner", "scout", "spy"]
+)
+def test_spy_takes_any_piece_it_attacks(defender):
+    outcome = fight("stratego", "spy", "stratego", defender)
+    assert (outcome.attacker_survives, outcome.defender_survives) == (True, False)
+    assert outcome.special == "spy_strike"
+
+
+@pytest.mark.parametrize("attacker", ["marshal", "captain", "miner", "scout"])
+def test_spy_dies_to_anything_that_attacks_it(attacker):
+    outcome = fight("stratego", attacker, "stratego", "spy")
+    assert (outcome.attacker_survives, outcome.defender_survives) == (True, False)
+    assert outcome.special == "spy_exposed"
+
+
+def test_spy_attacking_a_bomb_still_dies():
+    outcome = fight("stratego", "spy", "stratego", "bomb")
+    assert (outcome.attacker_survives, outcome.defender_survives) == (False, True)
+    assert outcome.special == "bomb_blast"
 
 
 def test_miner_defuses_bombs_other_ranks_do_not():
     assert fight("stratego", "miner", "stratego", "bomb").attacker_survives
     scout_hit = fight("stratego", "scout", "stratego", "bomb")
     assert (scout_hit.attacker_survives, scout_hit.defender_survives) == (False, True)
-
-
-def test_rank_comparison_and_equal_ranks():
-    assert fight("stratego", "general", "stratego", "colonel").attacker_survives
-    loss = fight("stratego", "spy", "stratego", "colonel")
-    assert (loss.attacker_survives, loss.defender_survives) == (False, True)
-    tie = fight("stratego", "scout", "stratego", "scout")
-    assert (tie.attacker_survives, tie.defender_survives) == (False, False)
 
 
 def test_combat_through_apply_move_reveals_both_participants():

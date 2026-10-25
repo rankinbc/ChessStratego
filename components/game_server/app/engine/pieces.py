@@ -32,17 +32,18 @@ STRATEGO_TYPES = (
     "captain", "major", "colonel", "general", "marshal",
 )
 
-# Classic stratego ranks for the types in the v1 reduced set. Flag and bomb
-# have no rank — they never win a rank comparison (specialty rules only).
+# Classic 1-is-strongest Stratego numbering (Marshal 1 ... Scout 9): a LOWER
+# number wins a rank fight. The Spy carries no number — its combat is pure
+# specialty (wins when attacking anything but a Bomb, dies when attacked),
+# so it is deliberately absent here. Flag and Bomb likewise have no rank.
 STRATEGO_RANKS: dict[str, int] = {
-    "spy": 1,
-    "scout": 2,
-    "miner": 3,
-    "captain": 6,
-    "major": 7,
-    "colonel": 8,
-    "general": 9,
-    "marshal": 10,
+    "marshal": 1,
+    "general": 2,
+    "colonel": 3,
+    "major": 4,
+    "captain": 5,
+    "miner": 8,
+    "scout": 9,
 }
 
 CHESS_SET_COUNTS: dict[str, int] = {

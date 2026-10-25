@@ -15,18 +15,20 @@ const CHESS_GLYPHS = {
   king: "♚",
 };
 
-// Classic Stratego-style labels: rank numbers, F(lag), B(omb), S(py).
+// Classic 1-is-strongest Stratego labels: Marshal 1 ... Scout 9, plus
+// F(lag), B(omb), S(py). Must stay in step with STRATEGO_RANKS in
+// game_server/app/engine/pieces.py — the server never sends the number.
 const STRATEGO_LABELS = {
   flag: "F",
   bomb: "B",
   spy: "S",
-  scout: "2",
-  miner: "3",
-  captain: "6",
-  major: "7",
-  colonel: "8",
-  general: "9",
-  marshal: "10",
+  marshal: "1",
+  general: "2",
+  colonel: "3",
+  major: "4",
+  captain: "5",
+  miner: "8",
+  scout: "9",
 };
 
 export function pieceLabel(piece) {

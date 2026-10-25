@@ -86,7 +86,7 @@ Inactive variants stay documented in full in `RULES.md` (they are docs, not dead
 
 **Gotchas:**
 - **Doc/code lockstep** — see "Rule-change workflow" above; it is this component's reason to exist.
-- **Open mechanics still unresolved**: exact board size (10x10 vs 12x12), chess-piece setup placement, and turn order are marked open in `RULES.md` — close them (with the user or via the v1 PRP's defaults) before finalizing `board.py` / `movement.py`.
+- **All core mechanics are decided** (board, setup, turn order, combat, win conditions, armies, movement). The only open questions left in `RULES.md` are the ones each inactive variant lists for "decide at activation time" (rank-mapping combat, classic check). Rules are decided on paper only until the first logged playtest — treat `DECISION_LOG.md` rows marked "pre-playtest" as tentative.
 - **Log rule changes, not playtest sessions** — `DECISION_LOG.md` gets a row when a rule actually changed.
 
 ---

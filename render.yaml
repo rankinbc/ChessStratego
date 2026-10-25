@@ -1,0 +1,19 @@
+# One-tap hosting on Render's free tier so the game can be played from phones
+# anywhere: https://render.com/deploy?repo=https://github.com/rankinbc/ChessStratego
+#
+# Free instances run ONE process (required: game state is in-memory, see
+# app/rooms.py), support websockets, and spin down after ~15 idle minutes.
+# A spin-down forgets in-progress games; a live game keeps the socket busy
+# so it stays up. Match logs written on the instance disk are ephemeral.
+services:
+  - type: web
+    name: chessstratego
+    runtime: python
+    plan: free
+    rootDir: components/game_server
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7

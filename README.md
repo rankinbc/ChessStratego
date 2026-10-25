@@ -30,6 +30,7 @@ ChessStratego/
 - Server + client: `uvicorn app.main:app --host 127.0.0.1 --port 8000` from `components/game_server/` (any port works if 8000 is busy, e.g. `--port 8765`; use `--host 0.0.0.0` for LAN play), then open the printed URL
 - Click "Create a game", share the link, play. Match logs land in `output/game_server/`
 - Rulebook: open `components/rulebook/RULES.md`
+- Play over the internet without a PC: tap [Deploy to Render](https://render.com/deploy?repo=https://github.com/rankinbc/ChessStratego) (free tier, GitHub login), wait for the build, then open the `https://chessstratego-xxxx.onrender.com` URL it gives you and "Create a game" from there. `render.yaml` holds the config. Free instances sleep after ~15 idle minutes and forget unfinished games; a game in progress keeps them awake
 
 ## How to develop with Claude
 
